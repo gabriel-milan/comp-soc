@@ -142,3 +142,4 @@ TELEGRAM_TOKEN = getenv("TELEGRAM_TOKEN")
 if TELEGRAM_TOKEN is None:
     logger.error("Environment variable TELEGRAM_TOKEN not found.")
     sys.exit(1)
+TELEGRAM_WORKERS = 0
