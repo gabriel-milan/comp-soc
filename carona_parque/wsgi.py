@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 WSGI config for carona_parque project.
 
@@ -11,6 +12,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'carona_parque.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "carona_parque.settings")
 
 application = get_wsgi_application()
