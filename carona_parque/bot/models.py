@@ -77,6 +77,7 @@ class Neighborhood(models.Model):
 class Ride(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     destination = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
+    passengers = models.ManyToManyField(User, related_name="rides")
     passenger_seats = models.IntegerField()
     start_timestamp = models.DateTimeField()
     end_timestamp = models.DateTimeField(null=True, blank=True)

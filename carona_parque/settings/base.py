@@ -13,13 +13,14 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from os import getenv
 from pathlib import Path
-import sys
 
 from loguru import logger
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_ROOT = BASE_DIR / "static"
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "carona_parque.bot",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -81,8 +83,12 @@ WSGI_APPLICATION = "carona_parque.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
@@ -128,7 +134,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-REDIS_URL = "redis://localhost:6379"
+REDIS_URL = "redis://redis:6379"
 BROKER_URL = REDIS_URL
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
@@ -140,6 +146,5 @@ CELERY_TASK_DEFAULT_QUEUE = "default"
 
 TELEGRAM_TOKEN = getenv("TELEGRAM_TOKEN")
 if TELEGRAM_TOKEN is None:
-    logger.error("Environment variable TELEGRAM_TOKEN not found.")
-    sys.exit(1)
+    logger.warning("Environment variable TELEGRAM_TOKEN not found.")
 TELEGRAM_WORKERS = 0

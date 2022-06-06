@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+  redis:
+    image: redis:6
+    restart: unless-stopped
+  web:
+    build:
+      context: ./
+      dockerfile: Dockerfile.web
+    ports:
+      - "3000:80"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+  bot:
+    build:
+      context: ./
+      dockerfile: Dockerfile.bot
+    env_file:
+      - ./.env
+    depends_on:
+      - web
+  celery:
+    build:
+      context: ./
+      dockerfile: Dockerfile.bot
+    command: celery -A carona_parque worker --loglevel=INFO
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - web
+  celery-beat:
+    build:
+      context: ./
+      dockerfile: Dockerfile.bot
+    command: celery -A carona_parque beat -l info --scheduler django_celery_beat.schedulers.DatabaseScheduler
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - celery
+      - web
+
+volumes:
+  postgres_data:

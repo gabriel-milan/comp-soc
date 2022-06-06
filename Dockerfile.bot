@@ -1,0 +1,14 @@
+FROM python:3.9-slim
+
+# Install virtualenv and create a virtual environment
+RUN pip install --no-cache-dir virtualenv==20.6.0 && virtualenv /env --python=python3.9
+ENV PATH /env/bin:$PATH
+
+# Install requirements
+WORKDIR /app
+COPY . .
+RUN /env/bin/pip install --no-cache-dir .
+
+# Run app
+STOPSIGNAL SIGTERM
+CMD ["python3", "/app/run_bot.py"]

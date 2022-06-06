@@ -1,25 +1,36 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from telegram import Bot, BotCommand, Update
-from telegram.ext import CommandHandler, Dispatcher, Updater
+from telegram.ext import CommandHandler, Dispatcher, Filters, MessageHandler, Updater
 
 from carona_parque.celery import app
+from carona_parque.bot.handlers.default import handle
 from carona_parque.bot.handlers.onboarding import handlers as onboarding_handlers
+
+COMMANDS = {
+    "cadastro": {
+        "description": "Verifica o estado do seu cadastro",
+        "handler": onboarding_handlers.registration_status,
+    },
+    "cadastrar": {
+        "description": "Faz o cadastro do usuário",
+        "handler": onboarding_handlers.register,
+    },
+}
 
 
 def setup_dispatcher(dispatcher: Dispatcher):
-    dispatcher.add_handler(CommandHandler("hello", onboarding_handlers.hello))
+    for command, command_data in COMMANDS.items():
+        dispatcher.add_handler(CommandHandler(command, command_data["handler"]))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle))
     return dispatcher
 
 
 def setup_commands(bot: Bot):
-    commands = {
-        "hello": "Say hello to the bot",
-    }
     bot.set_my_commands(
         commands=[
-            BotCommand(command, description)
-            for command, description in commands.items()
+            BotCommand(command, command_data["description"])
+            for command, command_data in COMMANDS.items()
         ]
     )
 
