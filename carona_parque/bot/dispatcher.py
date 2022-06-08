@@ -6,6 +6,7 @@ from telegram.ext import CommandHandler, Dispatcher, Filters, MessageHandler, Up
 from carona_parque.celery import app
 from carona_parque.bot.handlers.default import handle
 from carona_parque.bot.handlers.cars import handlers as cars_handlers
+from carona_parque.bot.handlers.geo import handlers as geo_handlers
 from carona_parque.bot.handlers.onboarding import handlers as onboarding_handlers
 
 COMMANDS = {
@@ -24,6 +25,14 @@ COMMANDS = {
     "carros": {
         "description": "Lista os carros do usuário",
         "handler": cars_handlers.list_cars,
+    },
+    "vizinhancas": {
+        "description": "Lista as vizinhancas",
+        "handler": geo_handlers.list_neighborhoods,
+    },
+    "zonas": {
+        "description": "Lista as zonas",
+        "handler": geo_handlers.list_zones,
     },
 }
 

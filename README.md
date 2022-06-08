@@ -33,6 +33,8 @@ docker-compose up
 
 - [x] `/adicionar_carro` (adicionar um carro)
 - [x] `/carros` (listar carros)
+- [x] `/zonas` (listar zonas)
+- [x] `/vizinhancas` (listar vizinhanças)
 - [ ] `/adicionar_carona` (adicionar uma carona)
 - [ ] `/caronas` (listar caronas, suas ou todas)
 - [ ] Adicionar opção de `/caronas` filtrando por zona e/ou data de partida
