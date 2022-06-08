@@ -5,6 +5,7 @@ from telegram.ext import CommandHandler, Dispatcher, Filters, MessageHandler, Up
 
 from carona_parque.celery import app
 from carona_parque.bot.handlers.default import handle
+from carona_parque.bot.handlers.cars import handlers as cars_handlers
 from carona_parque.bot.handlers.onboarding import handlers as onboarding_handlers
 
 COMMANDS = {
@@ -15,6 +16,14 @@ COMMANDS = {
     "cadastrar": {
         "description": "Faz o cadastro do usuário",
         "handler": onboarding_handlers.register,
+    },
+    "adicionar_carro": {
+        "description": "Adiciona um carro ao usuário",
+        "handler": cars_handlers.add_car,
+    },
+    "carros": {
+        "description": "Lista os carros do usuário",
+        "handler": cars_handlers.list_cars,
     },
 }
 

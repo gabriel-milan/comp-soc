@@ -32,10 +32,8 @@ def register(update: Update, context: CallbackContext):
         )
         # Send message
         update.message.reply_text(
-            (
-                "Você foi cadastrado com sucesso! Para verificar o estado do seu cadastro, ",
-                "digite /cadastro",
-            )
+            "Você foi cadastrado com sucesso! Para verificar o estado do seu cadastro, "
+            + "digite /cadastro"  # noqa
         )
 
 

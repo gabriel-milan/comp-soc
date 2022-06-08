@@ -18,24 +18,11 @@ class User(models.Model):
         verbose_name_plural = "Users"
 
 
-class CarColor(models.Model):
-    name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Car Color"
-        verbose_name_plural = "Car Colors"
-
-
 class Car(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     plate = models.CharField(max_length=7)
     model = models.CharField(max_length=255)
-    color = models.ForeignKey(CarColor, on_delete=models.CASCADE)
+    color = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

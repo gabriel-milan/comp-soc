@@ -31,8 +31,8 @@ docker-compose up
 
 ## Lista de coisas a fazer
 
-- [ ] `/adicionar_carro` (adicionar um carro)
-- [ ] `/carros` (listar carros)
+- [x] `/adicionar_carro` (adicionar um carro)
+- [x] `/carros` (listar carros)
 - [ ] `/adicionar_carona` (adicionar uma carona)
 - [ ] `/caronas` (listar caronas, suas ou todas)
 - [ ] Adicionar opção de `/caronas` filtrando por zona e/ou data de partida
