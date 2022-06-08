@@ -27,7 +27,7 @@ class Car(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.model} - {self.plate}"
+        return f"{self.model} {self.color} - {self.plate}"
 
     class Meta:
         verbose_name = "Car"

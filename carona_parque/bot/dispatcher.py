@@ -8,6 +8,7 @@ from carona_parque.bot.handlers.default import handle
 from carona_parque.bot.handlers.cars import handlers as cars_handlers
 from carona_parque.bot.handlers.geo import handlers as geo_handlers
 from carona_parque.bot.handlers.onboarding import handlers as onboarding_handlers
+from carona_parque.bot.handlers.rides import handlers as rides_handlers
 
 COMMANDS = {
     "cadastro": {
@@ -33,6 +34,14 @@ COMMANDS = {
     "zonas": {
         "description": "Lista as zonas",
         "handler": geo_handlers.list_zones,
+    },
+    "adicionar_carona": {
+        "description": "Adiciona uma carona",
+        "handler": rides_handlers.add_ride,
+    },
+    "caronas": {
+        "description": "Lista as caronas",
+        "handler": rides_handlers.list_rides,
     },
 }
 
