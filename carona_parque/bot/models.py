@@ -66,6 +66,7 @@ class Ride(models.Model):
     destination = models.ForeignKey(Neighborhood, on_delete=models.CASCADE)
     passengers = models.ManyToManyField(User, related_name="rides")
     passenger_seats = models.IntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     start_timestamp = models.DateTimeField()
     end_timestamp = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -37,7 +37,7 @@ docker-compose up
 - [x] `/vizinhancas` (listar vizinhanças)
 - [x] `/adicionar_carona` (adicionar uma carona)
 - [x] `/caronas` (listar caronas, suas ou todas)
-- [ ] Adicionar opção de `/caronas` filtrando por zona e/ou data de partida
+- [x] Adicionar opção de `/caronas` filtrando por zona e/ou data de partida
 - [ ] `/pegar_carona` (alocar uma vaga para uma carona)
 - [ ] `/historico` (listar caronas que o usuário já fez)
 - [ ] Implementar lembrete 15min antes de partida

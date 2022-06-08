@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, tzinfo
 import re
 
 from django.conf import settings
@@ -36,10 +36,10 @@ def add_ride(update: Update, context: CallbackContext):
 
     # Get arguments (must be car_id, neighborhood_id, date, time, seats)
     args = context.args
-    if len(args) != 5:
+    if len(args) != 6:
         update.message.reply_text(
             "Você deve usar o comando `/adicionar_carona <id_carro> "
-            + "<id_vizinhanca> <data> <hora> <vagas>`"  # noqa
+            + "<id_vizinhanca> <data> <hora> <vagas> <preco>`"  # noqa
         )
         return
 
@@ -60,6 +60,11 @@ def add_ride(update: Update, context: CallbackContext):
         seats = int(args[4])
     except ValueError:
         update.message.reply_text("A quantidade de vagas deve ser um número inteiro.")
+        return
+    try:
+        price = float(args[5])
+    except ValueError:
+        update.message.reply_text("O preço deve ser um número real.")
         return
 
     # Get car
@@ -108,9 +113,18 @@ def add_ride(update: Update, context: CallbackContext):
     except AttributeError:
         update.message.reply_text("A hora deve estar no formato HH:MM")
 
+    # Assert that date is in the future
+    if date < datetime.now(tz=pytz.timezone(settings.TIME_ZONE)):
+        update.message.reply_text("A data deve ser no futuro!")
+        return
+
     # Create ride
     ride = Ride(
-        car=car, destination=neighborhood, passenger_seats=seats, start_timestamp=date
+        car=car,
+        destination=neighborhood,
+        passenger_seats=seats,
+        start_timestamp=date,
+        price=price,
     )
     ride.save()
 
@@ -137,11 +151,54 @@ def list_rides(update: Update, context: CallbackContext):
         update.message.reply_text("Você ainda não está aprovado. Mas fique de olho! 🧐")
         return
 
+    # Check if there are arguments. There must be 0, 1 or 2 arguments
+    if len(context.args) > 2:
+        update.message.reply_text(
+            "Você deve usar o comando `/listar_caronas` sem argumentos ou fornecendo a data "
+            + "da carona e/ou o ID da zona."  # noqa
+        )
+        return
+
+    # Parse arguments
+    date = None
+    zone = None
+    if len(context.args) > 0:
+        # Try to parse useful things from arguments
+        for arg in context.args:
+            try:
+                date_parts = re.match(r"(\d{2})/(\d{2})/(\d{4})", arg).groups()
+                date: datetime = datetime(
+                    int(date_parts[2]),
+                    int(date_parts[1]),
+                    int(date_parts[0]),
+                    tzinfo=pytz.timezone(settings.TIME_ZONE),
+                )
+            except AttributeError:
+                pass
+            try:
+                zone = Zone.objects.get(id=int(arg))
+            except Zone.DoesNotExist:
+                pass
+            except ValueError:
+                pass
+        # If there is no date and no zone, it's an error
+        if date is None and zone is None:
+            update.message.reply_text(
+                "Você deve usar o comando `/listar_caronas` sem argumentos ou fornecendo a data "
+                + "da carona e/ou o ID da zona."  # noqa
+            )
+            return
+
+    # If there's a date, assure it's in the future
+    if date is not None and date < datetime.now(tz=pytz.timezone(settings.TIME_ZONE)):
+        update.message.reply_text("A data deve ser no futuro!")
+        return
+
     # Start text
     base_text = ""
 
     # Get current datetime
-    now = datetime.now()
+    now = datetime.now(tz=pytz.UTC)
 
     # Get rides you're driving
     rides_driving = Ride.objects.filter(car__user=user).filter(start_timestamp__gte=now)
@@ -161,11 +218,16 @@ def list_rides(update: Update, context: CallbackContext):
             base_text += (
                 "    * Vagas disponíveis: "
                 + str(ride.passenger_seats - ride.passengers.count())  # noqa
-                + "\n\n"  # noqa
+                + "\n"  # noqa
             )
+            base_text += "    * Preço: " + str(ride.price) + "\n\n"
 
     # Get other rides
     rides_all = Ride.objects.filter(start_timestamp__gte=now)
+    if date:
+        rides_all = rides_all.filter(start_timestamp__date=date)
+    if zone:
+        rides_all = rides_all.filter(destination__zone=zone)
     other_rides_count = 0
     if rides_all:
         for ride in rides_all:
@@ -187,8 +249,9 @@ def list_rides(update: Update, context: CallbackContext):
                 base_text += (
                     "    * Vagas disponíveis: "
                     + str(ride.passenger_seats - ride.passengers.count())  # noqa
-                    + "\n\n"  # noqa
+                    + "\n"  # noqa
                 )
+                base_text += "    * Preço: " + str(ride.price) + "\n\n"
                 other_rides_count += 1
 
     # Send message
