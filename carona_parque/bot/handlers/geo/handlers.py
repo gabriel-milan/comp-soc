@@ -19,16 +19,22 @@ def list_neighborhoods(update: Update, context: CallbackContext):
             )
             return
     else:
-        update.message.reply_text("Você deve digitar `/vizinhancas <id-da-zona>` ou somente `/vizinhancas`")
+        update.message.reply_text(
+            "Você deve digitar `/vizinhancas <id-da-zona>` ou somente `/vizinhancas`"
+        )
         return
     # Get neighborhoods
-    neighborhoods: List[Neighborhood] = Neighborhood.objects.filter(
-        zone=filter_zone,
-    ) if filter_zone else Neighborhood.objects.all()
-    base_text = \
-        "*Lista de vizinhanças*\n\n" + "\n".join(
-            f" * {n.id} - {n.name} (Zona {n.zone.id} - {n.zone.name})" for n in neighborhoods
+    neighborhoods: List[Neighborhood] = (
+        Neighborhood.objects.filter(
+            zone=filter_zone,
         )
+        if filter_zone
+        else Neighborhood.objects.all()
+    )
+    base_text = "*Lista de vizinhanças*\n\n" + "\n".join(
+        f" * {n.id} - {n.name} (Zona {n.zone.id} - {n.zone.name})"
+        for n in neighborhoods
+    )
     if not filter_zone:
         base_text += "\n\n*Para filtrar por zona, digite `/vizinhancas <id-da-zona>`"
     update.message.reply_text(base_text)
@@ -37,7 +43,5 @@ def list_neighborhoods(update: Update, context: CallbackContext):
 def list_zones(update: Update, context: CallbackContext):
     zones: List[Zone] = Zone.objects.all()
     update.message.reply_text(
-        "*Lista de zonas*\n\n" + "\n".join(
-            f" * {z.id} - {z.name}" for z in zones
-        )
+        "*Lista de zonas*\n\n" + "\n".join(f" * {z.id} - {z.name}" for z in zones)
     )
