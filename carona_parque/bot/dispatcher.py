@@ -43,6 +43,10 @@ COMMANDS = {
         "description": "Lista as caronas",
         "handler": rides_handlers.list_rides,
     },
+    "pegar_carona ": {
+        "description": "Aloca uma carona",
+        "handler": onboarding_handlers.ride_allocate,
+    },
 }
 
 

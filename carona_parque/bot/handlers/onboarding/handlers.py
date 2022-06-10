@@ -56,3 +56,21 @@ def registration_status(update: Update, context: CallbackContext):
         update.message.reply_text(
             "Você ainda não está cadastrado! 😓 Se deseja se cadastrar, digite `/cadastrar <nome>`"
         )
+def ride_allocate(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+
+    # Get user
+    try:
+        user: User = User.objects.get(telegram_chat_id=chat_id)
+        if user.approved:
+            update.message.reply_text("Você já está cadastrado e aprovado! 🤗")
+            return
+        else:
+            update.message.reply_text(
+                "Você ainda não está aprovado. Mas fique de olho! 🧐"
+            )
+    except User.DoesNotExist:
+        # tell it's not registered
+        update.message.reply_text(
+            "Você ainda não está cadastrado! 😓 Se deseja se cadastrar, digite `/cadastrar <nome>`"
+        )
