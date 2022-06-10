@@ -21,6 +21,7 @@ def add_car(update: Update, context: CallbackContext):
         if not user.approved:
             raise UserNotApproved()
     except User.DoesNotExist:
+        print("aqui")
         # tell it's not registered
         update.message.reply_text(
             "Você ainda não está Cadastrado! 😓 Se deseja se cadastrar, digite `/cadastrar <nome>`"
